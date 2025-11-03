@@ -1,0 +1,1 @@
+g++ -std=c++17 -g -O0 -Wall -o run src\main.cpp
