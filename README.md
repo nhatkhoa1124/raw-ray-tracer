@@ -2,7 +2,8 @@
 
 A CPU-based ray tracer written in C++ featuring realistic lighting, materials, and depth of field effects.
 
-![Ray Traced Scene](images/output.png)
+Sample render:
+<img width="800" height="400" alt="output" src="https://github.com/user-attachments/assets/aeddfe4d-78c9-402e-8496-eae6ee24d08e" />
 
 ## Features
 
@@ -22,21 +23,10 @@ A CPU-based ray tracer written in C++ featuring realistic lighting, materials, a
 - **Depth of field** effects for cinematic rendering
 - **Gamma correction** for accurate color representation
 
-## Quick Start
+## How to build/run program
+- Run build.bat file
+- Then run run.exe
+- The output image will be in images folder
 
 ### Prerequisites
 - C++ compiler (GCC, Clang, or MSVC)
-
-### Building
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/RawRayTracer.git
-cd RawRayTracer
-
-# Build the project
-mkdir build && cd build
-cmake ..
-make
-
-# Or compile directly
-g++ -O3 -std=c++11 src/*.cpp -o raytracer
