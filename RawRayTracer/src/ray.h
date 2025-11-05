@@ -1,5 +1,14 @@
 #pragma once
+#include <random>
 #include "vec3.h"
+
+float randnum()
+{
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_real_distribution<double> dis(0.0f, 1.0f);
+    return dis(gen);
+}
 
 class ray
 {

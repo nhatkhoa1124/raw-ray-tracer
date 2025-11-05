@@ -1,1 +1,0 @@
-g++ -std=c++17 -g -O0 -Wall -o program src\main.cpp
