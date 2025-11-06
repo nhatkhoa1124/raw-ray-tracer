@@ -54,7 +54,12 @@ hitable *random_scene()
             {
                 if (choose_mat < 0.8f)
                 { // diffuse
-                    list[i++] = new sphere(center, 0.2f, new lambertian(vec3(randnum() * randnum(), randnum() * randnum(), randnum() * randnum())));
+                    list[i++] = new moving_sphere(
+                        center, center + vec3(0.0f, 0.5f * randnum(), 0.0f),
+                        0.0f,
+                        1.0f,
+                        0.2f,
+                        new lambertian(vec3(randnum() * randnum(), randnum() * randnum(), randnum() * randnum())));
                 }
                 else if (choose_mat < 0.95f)
                 { // metal
@@ -89,13 +94,13 @@ int main()
     std::vector<unsigned char> image_data(width * height * channels);
     // Setup world
     hitable *world = random_scene();
-
     // Setup camera
-    vec3 lookfrom(0.0f, 1.5f, 6.3f);
-    vec3 lookat(0.0f, 0.9f, -1.0f);
+    vec3 lookfrom(13.0f, 2.0f, 3.0f);
+    vec3 lookat(0.0f, 0.0f, 0.0f);
     float dist_to_focus = (lookfrom - lookat).length();
-    float aperture = 0.1f;
-    camera cam(lookfrom, lookat, vec3(0.0f, 1.0f, 0.0f), 25.0f, float(width) / float(height), aperture, dist_to_focus);
+    float aperture = 0.05f;
+    float time0 = 0.0f, time1 = 1.0f;
+    camera cam(lookfrom, lookat, vec3(0.0f, 1.0f, 0.0f), 20.0f, float(width) / float(height), aperture, dist_to_focus, time0, time1);
     for (int j = height - 1; j >= 0; j--)
     {
         for (int i = 0; i < width; i++)

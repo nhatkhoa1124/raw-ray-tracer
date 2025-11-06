@@ -13,12 +13,19 @@ float randnum()
 class ray
 {
 public:
-    ray(){}
-    ray(const vec3& o, const vec3& d) {origin_point = o; direction_vector = d;}
-    vec3 origin() const {return origin_point;}
-    vec3 direction() const {return direction_vector;}
-    vec3 point_at_parameter(float t) const {return origin_point + t*direction_vector;} // Ray equation: ray = A + t*B
+    ray() {}
+    ray(const vec3 &origin, const vec3 &direction, float time = 0.0f)
+    {
+        m_origin = origin;
+        m_direction_vector = direction;
+        m_time = time;
+    }
+    inline vec3 origin() const { return m_origin; }
+    inline vec3 direction() const { return m_direction_vector; }
+    inline float time() const { return m_time; }
+    inline vec3 point_at_parameter(float t) const { return m_origin + t * m_direction_vector; } // Ray equation: ray = A + t*B
 private:
-    vec3 origin_point; 
-    vec3 direction_vector;
+    vec3 m_origin;
+    vec3 m_direction_vector;
+    float m_time;
 };
