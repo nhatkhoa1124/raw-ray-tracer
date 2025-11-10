@@ -5,6 +5,7 @@
 #include "hitable_list.h"
 #include "camera.h"
 #include "material.h"
+#include "bvh.h"
 
 #define TMAX 10000.0f
 
@@ -32,12 +33,12 @@ vec3 color(const ray &r, hitable *world, int depth)
 
 hitable *random_scene()
 {
-    int n = 100; // Reduced from 500 to 100
+    int n = 100;
     hitable **list = new hitable *[n + 1];
-    list[0] = new sphere(vec3(0.0f, -1000.0f, 0.0f), 1000.0f, new lambertian(vec3(0.5f, 0.5f, 0.5f)));
+    texture *checker = new checker_texture(new constant_texture(vec3(0.2f, 0.3f, 0.1f)), new constant_texture(vec3(0.9f, 0.9f, 0.9f)));
+    list[0] = new sphere(vec3(0.0f, -1000.0f, 0.0f), 1000.0f, new lambertian(checker));
     int i = 1;
 
-    // Reduced grid size: from -6 to 6 instead of -11 to 11
     for (int a = -6; a < 6; a++)
     {
         for (int b = -6; b < 6; b++)
@@ -59,7 +60,7 @@ hitable *random_scene()
                         0.0f,
                         1.0f,
                         0.2f,
-                        new lambertian(vec3(randnum() * randnum(), randnum() * randnum(), randnum() * randnum())));
+                        new lambertian(new constant_texture(vec3(randnum() * randnum(), randnum() * randnum(), randnum() * randnum()))));
                 }
                 else if (choose_mat < 0.95f)
                 { // metal
@@ -82,15 +83,15 @@ hitable *random_scene()
 
     // Add the 3 large spheres (total becomes exactly 100)
     list[i++] = new sphere(vec3(0.0f, 1.0f, 0.0f), 1.0f, new dielectric(1.5f));
-    list[i++] = new sphere(vec3(-4.0f, 1.0f, 0.0f), 1.0f, new lambertian(vec3(0.4f, 0.2f, 0.1f)));
+    list[i++] = new sphere(vec3(-4.0f, 1.0f, 0.0f), 1.0f, new lambertian(new constant_texture(vec3(0.4f, 0.2f, 0.1f))));
     list[i++] = new sphere(vec3(4.0f, 1.0f, 0.0f), 1.0f, new metal(vec3(0.7f, 0.6f, 0.5f), 0.0f));
 
-    return new hitable_list(list, i); // i should be exactly 100 now
+    return new bvh_node(list, i, 0.0f, 1.0f);
 }
 
 int main()
 {
-    int width = 800, height = 400, channels = 3, num_samples = 100;
+    int width = 200, height = 100, channels = 3, num_samples = 100;
     std::vector<unsigned char> image_data(width * height * channels);
     // Setup world
     hitable *world = random_scene();

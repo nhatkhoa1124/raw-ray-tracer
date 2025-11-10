@@ -5,19 +5,20 @@ class sphere : public hitable
 {
 public:
     sphere() {}
-    sphere(const vec3 &center, float radius, material *pmat) : center{center}, radius{radius}, m_mat_ptr{pmat} {}
+    sphere(const vec3 &center, float radius, material *pmat) : m_center{center}, m_radius{radius}, m_mat_ptr{pmat} {}
     bool hit(const ray &r, float tmin, float tmax, hit_record &rec) const override;
-    vec3 center;
-    float radius;
+    bool bounding_box(float time0, float time1, aabb &box) const override;
+    vec3 m_center;
+    float m_radius;
     material *m_mat_ptr;
 };
 
-bool sphere::hit(const ray &r, float tmin, float tmax, hit_record &rec) const
+inline bool sphere::hit(const ray &r, float tmin, float tmax, hit_record &rec) const
 {
-    vec3 oc = r.origin() - center;
+    vec3 oc = r.origin() - m_center;
     float a = dot(r.direction(), r.direction());
     float b = dot(oc, r.direction());
-    float c = dot(oc, oc) - radius * radius;
+    float c = dot(oc, oc) - m_radius * m_radius;
     float discriminant = b * b - a * c;
     if (discriminant > 0)
     {
@@ -26,7 +27,7 @@ bool sphere::hit(const ray &r, float tmin, float tmax, hit_record &rec) const
         {
             rec.t = temp;
             rec.p = r.point_at_parameter(rec.t);
-            rec.normal = (rec.p - center) / radius;
+            rec.normal = (rec.p - m_center) / m_radius;
             rec.mat_ptr = m_mat_ptr;
             return true;
         }
@@ -35,12 +36,18 @@ bool sphere::hit(const ray &r, float tmin, float tmax, hit_record &rec) const
         {
             rec.t = temp;
             rec.p = r.point_at_parameter(rec.t);
-            rec.normal = (rec.p - center) / radius;
+            rec.normal = (rec.p - m_center) / m_radius;
             rec.mat_ptr = m_mat_ptr;
             return true;
         }
     }
     return false;
+}
+
+inline bool sphere::bounding_box(float time0, float time1, aabb &box) const
+{
+    box = aabb(m_center - vec3(m_radius, m_radius, m_radius), m_center + vec3(m_radius, m_radius, m_radius));
+    return true;
 }
 
 class moving_sphere : public hitable
@@ -56,6 +63,7 @@ public:
     {
     }
     bool hit(const ray &r, float tmin, float tmax, hit_record &rec) const override;
+    bool bounding_box(float time0, float time1, aabb &box) const override;
     vec3 center(float time) const;
 
 private:
@@ -65,7 +73,7 @@ private:
     material *m_mat_ptr;
 };
 
-bool moving_sphere::hit(const ray &r, float tmin, float tmax, hit_record &rec) const
+inline bool moving_sphere::hit(const ray &r, float tmin, float tmax, hit_record &rec) const
 {
     vec3 oc = r.origin() - center(r.time());
     float a = dot(r.direction(), r.direction());
@@ -96,7 +104,17 @@ bool moving_sphere::hit(const ray &r, float tmin, float tmax, hit_record &rec) c
     return false;
 }
 
-vec3 moving_sphere::center(float time) const
+inline vec3 moving_sphere::center(float time) const
 {
     return m_center0 + ((time - m_time0) / (m_time1 - m_time0)) * (m_center1 - m_center0);
+}
+
+inline bool moving_sphere::bounding_box(float time0, float time1, aabb &box) const
+{
+    float t0 = ffmax(time0, m_time0);
+    float t1 = ffmin(time1, m_time1);
+    aabb box0(center(t0) - vec3(m_radius, m_radius, m_radius), center(t0) + vec3(m_radius, m_radius, m_radius));
+    aabb box1(center(t1) - vec3(m_radius, m_radius, m_radius), center(t1) + vec3(m_radius, m_radius, m_radius));
+    box = surrounding_box(box0, box1);
+    return true;
 }
