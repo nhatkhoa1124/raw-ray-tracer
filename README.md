@@ -2,10 +2,14 @@
 
 A CPU-based ray tracer written in C++ featuring realistic lighting, materials, and depth of field effects.
 
-Sample render:
+Sample renders:
+
 <img width="800" height="400" alt="output" src="https://github.com/user-attachments/assets/aeddfe4d-78c9-402e-8496-eae6ee24d08e" />
 
+<img width="800" height="400" alt="output" src="https://github.com/user-attachments/assets/0068a10e-30c6-4c6a-a0c8-d3226b381e53" />
+
 ## Features
+
 
 - **Physically Based Rendering**: Accurate light transport simulation
 - **Multiple Materials**: 
